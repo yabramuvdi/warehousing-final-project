@@ -1,22 +1,21 @@
 # Import required packages
-import numpy as np
 import requests
 import mysql.connector
+from datetime import datetime  #Module for managing dates
+from datetime import timedelta
+
+#Authentication
+#TO DO: MOVE AUTHENTICATION INFORMATION TO ANOTHER DOCUMENT
+db_username = "awesome_team"
+db_password = "nandan123"
+db_name = "big-apple"
+db_endpoint = "big-apple.cbx9jy53wa9n.us-east-2.rds.amazonaws.com"
 
 ############################# Calls 311 ###############################
 def get_calls_311():
     """Function to connect to the database with information regarding
     the calls to 311 and extract the relevant data.
     """
-
-    #Configuration settings
-    config = {
-      'user': 'newuser',
-      'password': 'newpassword',
-      'host': '0.0.0.0',
-      'database': 'test',
-      'raise_on_warnings': True
-    }
 
     #Get API token from file
     with open("app_token.txt") as file: app_token = file.readline().rstrip()
@@ -59,17 +58,27 @@ def get_calls_311():
     for call in calls_311:
         dict_calls = {'unique_key': call['unique_key']}
         for key in keys_311:
-           if np.sum([i==key for i in call.keys()])==1:
+           if sum([i==key for i in call.keys()])==1:
                dict_calls[key] = call[key]
            else:
                 dict_calls[key] = None
         data_311.append(dict_calls)
 
     return data_311
+
 def insert_calls_311(data_311):
     """Function to deletes the existing 311 calls table, creates it again,
     and populates it with the data provided as an input.
     """
+    #RDS configuration settings
+    config = {
+      'user': db_username,
+      'password': db_password,
+      #RDS instace endpoint
+      'host': db_endpoint,
+      'database': db_name,
+      'raise_on_warnings': True
+    }
 
     #MariaDB code for dropping the old table
     drop_311_calls = ("DROP TABLE `311_calls`")
@@ -130,21 +139,12 @@ def insert_calls_311(data_311):
     cnx.close()
 
     print('Done. Calls 311 data introduced in the database')
+
 ############################# Events ###############################
 def get_events():
     """Function to connect to the database with information regarding
     the events in New York and extract the relevant data.
     """
-
-    # Configuration settings
-    config = {
-      'user': 'newuser',
-      'password': 'newpassword',
-      'host': '0.0.0.0',
-      'database': 'test',
-      'raise_on_warnings': True
-    }
-
     #Get API token from file
     with open("app_token.txt") as file: app_token = file.readline().rstrip()
 
@@ -170,7 +170,7 @@ def get_events():
         #start by adding the event_id to the dictionary
         dict_events = {'event_id': a['event_id']}
         for key in keys_events:
-           if np.sum([k == key for k in a.keys()])== 1:
+           if sum([k == key for k in a.keys()])== 1:
                dict_events[key] = a[key]
            else:
                 dict_events[key] = None
@@ -181,6 +181,16 @@ def insert_events(data_events):
     """Function to deletes the existing events table, creates it again,
     and populates it with the data provided as an input.
     """
+    #RDS configuration settings
+    config = {
+      'user': db_username,
+      'password': db_password,
+      #RDS instace endpoint
+      'host': db_endpoint,
+      'database': db_name,
+      'raise_on_warnings': True
+    }
+
     #MariaDB code to drop table
     drop_events = ("DROP TABLE `events`")
 
@@ -231,15 +241,6 @@ def get_dhs():
     """Function to connect to the database with information regarding
     the information from the DHS and extract the relevant data.
     """
-    # Configuration settings
-    config = {
-      'user': 'newuser',
-      'password': 'newpassword',
-      'host': '0.0.0.0',
-      'database': 'test',
-      'raise_on_warnings': True
-    }
-
     #Get API token from file
     with open("app_token.txt") as file: app_token = file.readline().rstrip()
 
@@ -275,7 +276,7 @@ def get_dhs():
     for record in dhs:
         dict_dhs = {'date_of_census': record['date_of_census']}
         for key in keys_dhs:
-           if np.sum([i==key for i in record.keys()])==1:
+           if sum([i==key for i in record.keys()])==1:
                dict_dhs[key] = record[key]
            else:
                 dict_dhs[key] = None
@@ -286,6 +287,15 @@ def insert_dhs(data_dhs):
     """Function to deletes the existing DHS table, creates it again,
     and populates it with the data provided as an input.
     """
+    #RDS configuration settings
+    config = {
+      'user': db_username,
+      'password': db_password,
+      #RDS instace endpoint
+      'host': db_endpoint,
+      'database': db_name,
+      'raise_on_warnings': True
+    }
 
     #MariaDB code to delete table and create it again
     drop_dhs = ("DROP TABLE `dhs`")
@@ -343,15 +353,6 @@ def get_accidents():
     """Function to connect to the database with information regarding
     the accidents in New York and extract the relevant data.
     """
-    # Configuration settings
-    config = {
-      'user': 'newuser',
-      'password': 'newpassword',
-      'host': '0.0.0.0',
-      'database': 'test',
-      'raise_on_warnings': True
-    }
-
     #Get API token from file
     with open("app_token.txt") as file: app_token = file.readline().rstrip()
 
@@ -383,7 +384,7 @@ def get_accidents():
         #start by adding the collission_id to the dictionary
         dict_acc = {'collision_id': a['collision_id']}
         for key in keys_acc:
-           if np.sum([k == key for k in a.keys()])== 1:
+           if sum([k == key for k in a.keys()])== 1:
                dict_acc[key] = a[key]
            else:
                 dict_acc[key] = None
@@ -394,6 +395,16 @@ def insert_accidents(data_acc):
     """Function to deletes the existing accidents table, creates it again,
     and populates it with the data provided as an input.
     """
+    #RDS configuration settings
+    config = {
+      'user': db_username,
+      'password': db_password,
+      #RDS instace endpoint
+      'host': db_endpoint,
+      'database': db_name,
+      'raise_on_warnings': True
+    }
+
     #MariaDB code to delete the table and re create it
     drop_accidents = ("DROP TABLE `accidents`")
     create_accidents = (
@@ -435,6 +446,9 @@ def insert_accidents(data_acc):
 
 
     #Setup the connector
+
+
+
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
@@ -452,3 +466,28 @@ def insert_accidents(data_acc):
     cnx.close()
 
     print('Done. Accidents data introduced in the database')
+
+###################### FUNCTION EXECUTION ##############################
+
+def lambda_handler(event, context):
+    # TODO implement
+
+    #311 Calls
+    data_311 = get_calls_311()
+    insert_calls_311(data_311)
+
+    #Events
+    events = get_events()
+    insert_events(events)
+
+    #DHS
+    dhs = get_dhs()
+    insert_dhs(dhs)
+
+    #Accidents
+    accidents = get_accidents()
+    insert_accidents(accidents)
+    return {
+        'statusCode': 200,
+        'body': print('Hello from Lambda!')
+    }
