@@ -9,11 +9,11 @@ The sections below describe the required steps to setup the architecture.​
 ## Setting up an AWS Relational Databases
 First we need to create a database instance on [AWS RDS](https://aws.amazon.com/es/rds/). This requires an AWS account. Once the account is setup the following steps are required:
 
-3. Choose *MariaDB* version 10.2.21 as the Engine option
-5. Choose the *free tier* template
-6. Choose the identifier for the database and setup credentials. **Remember them!**
-8. Allow public access
-9. Create an initial database (e.g. *big_apple*)
+1. Choose *MariaDB* version 10.2.21 as the Engine option
+2. Choose the *free tier* template
+3. Choose the identifier for the database and setup credentials. **Remember them!**
+4. Allow public access
+5. Create an initial database (e.g. *big_apple*)
 
 After the database instance is created we need to allow for the source of the traffic to come from anywhere. Alternatively, we can edit the security setting to only allow traffic coming from the IP address of the creator of the database. At this stage we are going to use the former approach:
 
