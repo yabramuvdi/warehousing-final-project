@@ -21,12 +21,12 @@ config = {
 cnx = mysql.connector.connect(**config)
 cursor = cnx.cursor()
 
-def calls_data():
-    cursor.execute("SELECT * FROM 311_calls")
-    df_calls = pd.DataFrame(cursor.fetchall())
+def accidents_data():
+    cursor.execute("SELECT * FROM accidents")
+    df_acc = pd.DataFrame(cursor.fetchall())
 
-    cursor.execute('SHOW COLUMNS FROM 311_calls')
+    cursor.execute('SHOW COLUMNS FROM accidents')
     columns = cursor.fetchall()
     column_names = [c[0] for c in columns]
-    df_calls.columns = column_names
-    return(df_calls)
+    df_acc.columns = column_names
+    return(df_acc)

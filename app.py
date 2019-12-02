@@ -3,9 +3,11 @@ import dash
 import dash_html_components as html
 import dash_core_components as dcc
 import plotly.graph_objs as go
-from load_final import calls_data
+from load_final import accidents_data
 
-my_acc = calls_data()
+my_acc = accidents_data()
+print("****************** I GOT THE DATA ******************")
+print(my_acc)
 
 app = dash.Dash('dash-tutorial')
 
