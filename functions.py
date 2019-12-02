@@ -513,6 +513,22 @@ def insert_accidents(data_acc):
 
 ###################### FUNCTION EXECUTION ##############################
 
+# #311 Calls
+# data_311 = get_calls_311()
+# insert_calls_311(data_311)
+
+# #Events
+# events = get_events()
+# insert_events(events)
+
+# #DHS
+# dhs = get_dhs()
+# insert_dhs(dhs)
+
+# #Accidents
+# accidents = get_accidents()
+# insert_accidents(accidents)
+
 def lambda_handler(event, context):
     # TODO implement
     
