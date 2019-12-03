@@ -401,7 +401,7 @@ def get_accidents():
     last_week_str = last_week.strftime("%Y-%m-%dT%H:%M:%S")
 
     #TO DO: make the query dates a parameter of the function
-    query_acc = "$where=accident_date between " + "'" + last_week_str + "' and '"  + now_string + "'" + "&$limit=50000"
+    query_acc = "$where=crash_date between " + "'" + last_week_str + "' and '"  + now_string + "'" + "&$limit=50000"
     query_url_acc = url_acc + "$$app_token=" + app_token + "&" + query_acc
 
 
@@ -410,7 +410,7 @@ def get_accidents():
     acc = response.json()
 
     #Select keys
-    keys_acc =  ["collision_id", "accident_date", "accident_time",
+    keys_acc =  ["collision_id", "crash_date", "crash_time",
                  "borough", "zip_code", "latitude", "longitude",
                  "number_of_persons_injured", "number_of_persons_killed",
                  "number_pedestrians_injured", "number_of_pedestrians_killed",
@@ -451,8 +451,8 @@ def insert_accidents(data_acc):
     create_accidents = (
         "CREATE TABLE `accidents` ("
         "  `collision_id` INTEGER PRIMARY KEY,"
-        "  `accident_date` VARCHAR(30),"
-        "  `accident_time` VARCHAR(30),"
+        "  `crash_date` VARCHAR(30),"
+        "  `crash_time` VARCHAR(30),"
         "  `borough` VARCHAR(30),"
         "  `zip_code` INTEGER,"
         "  `latitude` INTEGER,"
@@ -472,14 +472,14 @@ def insert_accidents(data_acc):
     #Query to insert data into MariaDB
     acc_sql = (
        "insert into accidents"
-       "(collision_id, accident_date, accident_time, borough, zip_code, latitude, longitude,"
+       "(collision_id, crash_date, crash_time, borough, zip_code, latitude, longitude,"
         "number_of_persons_injured, number_of_persons_killed, "
         "number_pedestrians_injured, number_of_pedestrians_killed, "
         "number_of_cyclists_injured, number_of_cyclists_killed, "
         "number_of_motorists_injured, number_of_motorists_killed, "
         "contributing_factor_vehicle_1, contributing_factor_vehicle_2)"
 
-        "values (%(collision_id)s, %(accident_date)s, %(accident_time)s, %(borough)s, %(zip_code)s, %(latitude)s,"
+        "values (%(collision_id)s, %(crash_date)s, %(crash_time)s, %(borough)s, %(zip_code)s, %(latitude)s,"
         "%(longitude)s, %(number_of_persons_injured)s, %(number_of_persons_killed)s,"
         "%(number_pedestrians_injured)s, %(number_of_pedestrians_killed)s, %(number_of_cyclists_injured)s,"
         "%(number_of_cyclists_killed)s, %(number_of_motorists_injured)s, %(number_of_motorists_killed)s,"
