@@ -14,8 +14,8 @@ sudo usermod -aG docker ubuntu
 # At this stage we should logout, but we wont
 
 #Get docker container
-docker pull yabramuvdi/dashboards:latest
-docker run -d --name app -p 8050:8050 yabramuvdi/dashboards:latest
+sudo docker pull yabramuvdi/dashboards:latest
+sudo docker run -d --name app -p 8050:8050 yabramuvdi/dashboards:latest
 
 #################################################################
 # OLD CODE
