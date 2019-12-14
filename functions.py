@@ -23,18 +23,18 @@ def get_calls_311():
     url_311 = "https://data.cityofnewyork.us/resource/erm2-nwe9.json?"
 
     #Prepare URL query
-    
+
     #datetime object containing current date and time
     now = datetime.now()
     last_week = now - timedelta(weeks = 1)
-    
+
     #Appropriate format for the query
     now_string = now.strftime("%Y-%m-%dT%H:%M:%S")
     last_week_str = last_week.strftime("%Y-%m-%dT%H:%M:%S")
 
     query_dates_311 = "$where=created_date between " + "'" + last_week_str + "'" + " and " + "'" + now_string + "'" + "&$limit=50000"
     query_311 = url_311 + "$$app_token=" + app_token + "&" + query_dates_311
-    
+
     #Query the URL and get response
     response = requests.get(query_311)
     calls_311 = response.json()
@@ -70,9 +70,9 @@ def get_calls_311():
            else:
                 dict_calls[key] = None
         data_311.append(dict_calls)
-    
+
     return data_311
-    
+
 
 def insert_calls_311(data_311):
     """Function to deletes the existing 311 calls table, creates it again,
@@ -134,7 +134,7 @@ def insert_calls_311(data_311):
         cursor.execute(drop_311_calls)
     except:
         print('Table does not exist')
-    
+
     cursor.execute(create_311_calls)
     #Insert the data into the database
     for call in data_311:
@@ -157,11 +157,11 @@ def get_events():
     url_events = "https://data.cityofnewyork.us/resource/tvpp-9vvx.json?"
 
     # Prepare URL query
-    
+
     #datetime object containing current date and time
     now = datetime.now()
     last_week = now - timedelta(weeks = 1)
-    
+
     #Appropriate format for the query
     now_string = now.strftime("%Y-%m-%dT%H:%M:%S")
     last_week_str = last_week.strftime("%Y-%m-%dT%H:%M:%S")
@@ -208,7 +208,7 @@ def insert_events(data_events):
 
     #MariaDB code to drop table
     drop_events = ("DROP TABLE `events`")
-    
+
     #MariaDB code to create table
     create_events = (
        "CREATE TABLE `events` ("
@@ -241,7 +241,7 @@ def insert_events(data_events):
         cursor.execute(drop_events)
     except:
         print('Table does not exist')
-    
+
     cursor.execute(create_events)
 
     #Insert the data into the database
@@ -267,11 +267,11 @@ def get_dhs():
     url_dhs = "https://data.cityofnewyork.us/resource/k46n-sa2m.json?"
 
     # Prepare URL query
-    
+
     #datetime object containing current date and time
     now = datetime.now()
     last_week = now - timedelta(weeks = 1)
-    
+
     #Appropriate format for the query
     now_string = now.strftime("%Y-%m-%dT%H:%M:%S")
     last_week_str = last_week.strftime("%Y-%m-%dT%H:%M:%S")
@@ -367,7 +367,7 @@ def insert_dhs(data_dhs):
     except:
         print('Table does not exist')
     cursor.execute(create_dhs)
- 
+
     #Insert the data into the database
     for day in data_dhs:
        cursor.execute(dhs_sql, day)
@@ -391,11 +391,11 @@ def get_accidents():
     url_acc = "https://data.cityofnewyork.us/resource/h9gi-nx95.json?"
 
     # Prepare URL query
-    
+
     #datetime object containing current date and time
     now = datetime.now()
     last_week = now - timedelta(weeks = 1)
-    
+
     #Appropriate format for the query
     now_string = now.strftime("%Y-%m-%dT%H:%M:%S")
     last_week_str = last_week.strftime("%Y-%m-%dT%H:%M:%S")
@@ -414,8 +414,8 @@ def get_accidents():
                  "borough", "zip_code", "latitude", "longitude",
                  "number_of_persons_injured", "number_of_persons_killed",
                  "number_pedestrians_injured", "number_of_pedestrians_killed",
-                 "number_of_cyclists_injured", "number_of_cyclists_killed",
-                 "number_of_motorists_injured", "number_of_motorists_killed",
+                 "number_of_cyclist_injured", "number_of_cyclist_killed",
+                 "number_of_motorist_injured", "number_of_motorist_killed",
                  "contributing_factor_vehicle_1", "contributing_factor_vehicle_2"]
 
     #Extract relevant data from the JSON file and store it as a dictionary
@@ -461,10 +461,10 @@ def insert_accidents(data_acc):
         "  `number_of_persons_killed` INTEGER,"
         "  `number_pedestrians_injured` INTEGER,"
         "  `number_of_pedestrians_killed` INTEGER,"
-        "  `number_of_cyclists_injured` INTEGER,"
-        "  `number_of_cyclists_killed` INTEGER,"
-        "  `number_of_motorists_injured` INTEGER,"
-        "  `number_of_motorists_killed` INTEGER,"
+        "  `number_of_cyclist_injured` INTEGER,"
+        "  `number_of_cyclist_killed` INTEGER,"
+        "  `number_of_motorist_injured` INTEGER,"
+        "  `number_of_motorist_killed` INTEGER,"
         "  `contributing_factor_vehicle_1` VARCHAR(1000),"
         "  `contributing_factor_vehicle_2` VARCHAR(1000)"
         ") ENGINE=InnoDB")
@@ -531,23 +531,23 @@ def insert_accidents(data_acc):
 
 def lambda_handler(event, context):
     # TODO implement
-    
+
     #311 Calls
     data_311 = get_calls_311()
     insert_calls_311(data_311)
-    
+
     #Events
     events = get_events()
     insert_events(events)
-    
+
     #DHS
     dhs = get_dhs()
     insert_dhs(dhs)
-    
+
     #Accidents
     accidents = get_accidents()
     insert_accidents(accidents)
-    
+
     return {
         'statusCode': 200,
         'body': 'Load complete! With timer!'
