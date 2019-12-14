@@ -413,7 +413,7 @@ def get_accidents():
     keys_acc =  ["collision_id", "crash_date", "crash_time",
                  "borough", "zip_code", "latitude", "longitude",
                  "number_of_persons_injured", "number_of_persons_killed",
-                 "number_pedestrians_injured", "number_of_pedestrians_killed",
+                 "number_of_pedestrians_injured", "number_of_pedestrians_killed",
                  "number_of_cyclist_injured", "number_of_cyclist_killed",
                  "number_of_motorist_injured", "number_of_motorist_killed",
                  "contributing_factor_vehicle_1", "contributing_factor_vehicle_2"]
@@ -431,6 +431,7 @@ def get_accidents():
         data_acc.append(dict_acc)
 
     return data_acc
+
 def insert_accidents(data_acc):
     """Function to deletes the existing accidents table, creates it again,
     and populates it with the data provided as an input.
@@ -451,15 +452,15 @@ def insert_accidents(data_acc):
     create_accidents = (
         "CREATE TABLE `accidents` ("
         "  `collision_id` INTEGER PRIMARY KEY,"
-        "  `crash_date` VARCHAR(30),"
-        "  `crash_time` VARCHAR(30),"
+        "  `crash_date` DATETIME,"
+        "  `crash_time` TIME,"
         "  `borough` VARCHAR(30),"
         "  `zip_code` INTEGER,"
         "  `latitude` INTEGER,"
         "  `longitude` INTEGER,"
         "  `number_of_persons_injured` INTEGER,"
         "  `number_of_persons_killed` INTEGER,"
-        "  `number_pedestrians_injured` INTEGER,"
+        "  `number_of_pedestrians_injured` INTEGER,"
         "  `number_of_pedestrians_killed` INTEGER,"
         "  `number_of_cyclist_injured` INTEGER,"
         "  `number_of_cyclist_killed` INTEGER,"
@@ -474,22 +475,19 @@ def insert_accidents(data_acc):
        "insert into accidents"
        "(collision_id, crash_date, crash_time, borough, zip_code, latitude, longitude,"
         "number_of_persons_injured, number_of_persons_killed, "
-        "number_pedestrians_injured, number_of_pedestrians_killed, "
-        "number_of_cyclists_injured, number_of_cyclists_killed, "
-        "number_of_motorists_injured, number_of_motorists_killed, "
+        "number_of_pedestrians_injured, number_of_pedestrians_killed, "
+        "number_of_cyclist_injured, number_of_cyclist_killed, "
+        "number_of_motorist_injured, number_of_motorist_killed, "
         "contributing_factor_vehicle_1, contributing_factor_vehicle_2)"
 
         "values (%(collision_id)s, %(crash_date)s, %(crash_time)s, %(borough)s, %(zip_code)s, %(latitude)s,"
         "%(longitude)s, %(number_of_persons_injured)s, %(number_of_persons_killed)s,"
-        "%(number_pedestrians_injured)s, %(number_of_pedestrians_killed)s, %(number_of_cyclists_injured)s,"
-        "%(number_of_cyclists_killed)s, %(number_of_motorists_injured)s, %(number_of_motorists_killed)s,"
+        "%(number_of_pedestrians_injured)s, %(number_of_pedestrians_killed)s, %(number_of_cyclist_injured)s,"
+        "%(number_of_cyclist_killed)s, %(number_of_motorist_injured)s, %(number_of_motorist_killed)s,"
         "%(contributing_factor_vehicle_1)s, %(contributing_factor_vehicle_2)s)")
 
 
     #Setup the connector
-
-
-
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
