@@ -1,24 +1,14 @@
 # Import required packages
 import requests
 import mysql.connector
+import os
 from datetime import datetime
 from datetime import timedelta
 
-####################################################################
-#                       Overall TO DOs
-# 1. configure passwords in Lamba:
-# 2. make code DRY (Do not Repeat Yourself)
-# 3. Raise error messages
-####################################################################
-
-
-
-#https://docs.aws.amazon.com/lambda/latest/dg/env_variables.html
 db_username = "awesometeam"
-db_password = "nandan123"
 db_name = "test"
 db_endpoint = "big-apple.cbx9jy53wa9n.us-east-2.rds.amazonaws.com"
-app_token='x1uqIJMOnjOzlZZUrIcEwUY40'
+#Specify app_token and db_password in 'Environmental Variables' section of Lambda Function
 
 ############################# Calls 311 ###############################
 def get_calls_311():
@@ -26,8 +16,6 @@ def get_calls_311():
     the calls to 311 and extract the relevant data.
     """
 
-    #Get API token from file
-    # with open("app_token.txt") as file: app_token = file.readline().rstrip()
     #HTTPS address for the APIs
     url_311 = "https://data.cityofnewyork.us/resource/erm2-nwe9.json?"
 
@@ -42,12 +30,12 @@ def get_calls_311():
     last_week_str = last_week.strftime("%Y-%m-%dT%H:%M:%S")
 
     query_dates_311 = "$where=created_date between " + "'" + last_week_str + "'" + " and " + "'" + now_string + "'" + "&$limit=50000"
-    query_311 = url_311 + "$$app_token=" + app_token + "&" + query_dates_311
+    query_311 = url_311 + "$$app_token=" + os.environ['app_token'] + "&" + query_dates_311
 
     #Query the URL and get response
     response = requests.get(query_311)
     calls_311 = response.json()
-
+    
     #Select keys
     keys_311 = ['unique_key',
                 'created_date',
@@ -70,7 +58,6 @@ def get_calls_311():
                 'longitude']
 
     #Extract relevant data from the JSON file and store it as a dictionary
-    #TODO: simplify dictionary comprehension
     data_311 = []
     for call in calls_311:
         dict_calls = {'unique_key': call['unique_key']}
@@ -92,7 +79,7 @@ def insert_calls_311(data_311):
     config = {
       'user': db_username,
       'port': '3306',
-      'password': db_password,
+      'password': os.environ['db_password'],
       #RDS instace endpoint
       'host': db_endpoint,
       'database': db_name,
@@ -160,8 +147,6 @@ def get_events():
     """Function to connect to the database with information regarding
     the events in New York and extract the relevant data.
     """
-    #Get API token from file
-    # with open("app_token.txt") as file: app_token = file.readline().rstrip()
 
     # HTTPS address for the APIs
     url_events = "https://data.cityofnewyork.us/resource/tvpp-9vvx.json?"
@@ -171,14 +156,15 @@ def get_events():
     #datetime object containing current date and time
     now = datetime.now()
     last_week = now - timedelta(weeks = 1)
+    next_4weeks = now + timedelta(weeks = 4)
 
     #Appropriate format for the query
+    next_4weeks_string = next_4weeks.strftime("%Y-%m-%dT%H:%M:%S")
     now_string = now.strftime("%Y-%m-%dT%H:%M:%S")
-    last_week_str = last_week.strftime("%Y-%m-%dT%H:%M:%S")
 
     #TO DO: make the query dates a parameter of the function
-    query_events = "$where=start_date_time between " + "'" + last_week_str + "' and '"  + now_string + "'" + "&$limit=50000"
-    query_url_events = url_events + "$$app_token=" + app_token + "&" + query_events
+    query_events = "$where=start_date_time between " + "'" + now_string + "' and '"  + next_4weeks_string + "'" + "&$limit=50000"
+    query_url_events = url_events + "$$app_token=" + os.environ['app_token'] + "&" + query_events
 
     #Query the URL and get response
     response = requests.get(query_url_events)
@@ -209,7 +195,7 @@ def insert_events(data_events):
     config = {
       'user': db_username,
       'port': '3306',
-      'password': db_password,
+      'password': os.environ['db_password'],
       #RDS instace endpoint
       'host': db_endpoint,
       'database': db_name,
@@ -270,8 +256,6 @@ def get_dhs():
     """Function to connect to the database with information regarding
     the information from the DHS and extract the relevant data.
     """
-    #Get API token from file
-    # with open("app_token.txt") as file: app_token = file.readline().rstrip()
 
     # HTTPS address for the APIs
     url_dhs = "https://data.cityofnewyork.us/resource/k46n-sa2m.json?"
@@ -288,7 +272,7 @@ def get_dhs():
 
     #TO DO: make the query dates a parameter of the function
     query_dates_dhs = "$where=date_of_census between " + "'" + last_week_str + "' and '"  + now_string + "'" + "&$limit=1000"
-    query_dhs = url_dhs + "$$app_token=" + app_token + "&" + query_dates_dhs
+    query_dhs = url_dhs + "$$app_token=" + os.environ['app_token'] + "&" + query_dates_dhs
 
     #Query the URL and get response
     response = requests.get(query_dhs)
@@ -329,7 +313,7 @@ def insert_dhs(data_dhs):
     config = {
       'user': db_username,
       'port': '3306',
-      'password': db_password,
+      'password': os.environ['db_password'],
       #RDS instace endpoint
       'host': db_endpoint,
       'database': db_name,
@@ -394,8 +378,6 @@ def get_accidents():
     """Function to connect to the database with information regarding
     the accidents in New York and extract the relevant data.
     """
-    #Get API token from file
-    # with open("app_token.txt") as file: app_token = file.readline().rstrip()
 
     # HTTPS address for the APIs
     url_acc = "https://data.cityofnewyork.us/resource/h9gi-nx95.json?"
@@ -412,7 +394,7 @@ def get_accidents():
 
     #TO DO: make the query dates a parameter of the function
     query_acc = "$where=crash_date between " + "'" + last_week_str + "' and '"  + now_string + "'" + "&$limit=50000"
-    query_url_acc = url_acc + "$$app_token=" + app_token + "&" + query_acc
+    query_url_acc = url_acc + "$$app_token=" + os.environ['app_token'] + "&" + query_acc
 
 
     #Query the URL and get response
@@ -423,7 +405,7 @@ def get_accidents():
     keys_acc =  ["collision_id", "crash_date", "crash_time",
                  "borough", "zip_code", "latitude", "longitude",
                  "number_of_persons_injured", "number_of_persons_killed",
-                 "number_pedestrians_injured", "number_of_pedestrians_killed",
+                 "number_of_pedestrians_injured", "number_of_pedestrians_killed",
                  "number_of_cyclist_injured", "number_of_cyclist_killed",
                  "number_of_motorist_injured", "number_of_motorist_killed",
                  "contributing_factor_vehicle_1", "contributing_factor_vehicle_2"]
@@ -441,6 +423,7 @@ def get_accidents():
         data_acc.append(dict_acc)
 
     return data_acc
+
 def insert_accidents(data_acc):
     """Function to deletes the existing accidents table, creates it again,
     and populates it with the data provided as an input.
@@ -449,7 +432,7 @@ def insert_accidents(data_acc):
     config = {
       'user': db_username,
       'port': '3306',
-      'password': db_password,
+      'password': os.environ['db_password'],
       #RDS instace endpoint
       'host': db_endpoint,
       'database': db_name,
@@ -461,15 +444,15 @@ def insert_accidents(data_acc):
     create_accidents = (
         "CREATE TABLE `accidents` ("
         "  `collision_id` INTEGER PRIMARY KEY,"
-        "  `crash_date` VARCHAR(30),"
-        "  `crash_time` VARCHAR(30),"
+        "  `crash_date` DATETIME,"
+        "  `crash_time` TIME,"
         "  `borough` VARCHAR(30),"
         "  `zip_code` INTEGER,"
         "  `latitude` INTEGER,"
         "  `longitude` INTEGER,"
         "  `number_of_persons_injured` INTEGER,"
         "  `number_of_persons_killed` INTEGER,"
-        "  `number_pedestrians_injured` INTEGER,"
+        "  `number_of_pedestrians_injured` INTEGER,"
         "  `number_of_pedestrians_killed` INTEGER,"
         "  `number_of_cyclist_injured` INTEGER,"
         "  `number_of_cyclist_killed` INTEGER,"
@@ -484,15 +467,15 @@ def insert_accidents(data_acc):
        "insert into accidents"
        "(collision_id, crash_date, crash_time, borough, zip_code, latitude, longitude,"
         "number_of_persons_injured, number_of_persons_killed, "
-        "number_pedestrians_injured, number_of_pedestrians_killed, "
-        "number_of_cyclists_injured, number_of_cyclists_killed, "
-        "number_of_motorists_injured, number_of_motorists_killed, "
+        "number_of_pedestrians_injured, number_of_pedestrians_killed, "
+        "number_of_cyclist_injured, number_of_cyclist_killed, "
+        "number_of_motorist_injured, number_of_motorist_killed, "
         "contributing_factor_vehicle_1, contributing_factor_vehicle_2)"
 
         "values (%(collision_id)s, %(crash_date)s, %(crash_time)s, %(borough)s, %(zip_code)s, %(latitude)s,"
         "%(longitude)s, %(number_of_persons_injured)s, %(number_of_persons_killed)s,"
-        "%(number_pedestrians_injured)s, %(number_of_pedestrians_killed)s, %(number_of_cyclists_injured)s,"
-        "%(number_of_cyclists_killed)s, %(number_of_motorists_injured)s, %(number_of_motorists_killed)s,"
+        "%(number_of_pedestrians_injured)s, %(number_of_pedestrians_killed)s, %(number_of_cyclist_injured)s,"
+        "%(number_of_cyclist_killed)s, %(number_of_motorist_injured)s, %(number_of_motorist_killed)s,"
         "%(contributing_factor_vehicle_1)s, %(contributing_factor_vehicle_2)s)")
 
 
@@ -523,23 +506,9 @@ def insert_accidents(data_acc):
 
 ###################### FUNCTION EXECUTION ##############################
 
-# #311 Calls
-# data_311 = get_calls_311()
-# insert_calls_311(data_311)
-
-# #Events
-# events = get_events()
-# insert_events(events)
-
-# #DHS
-# dhs = get_dhs()
-# insert_dhs(dhs)
-
-# #Accidents
-# accidents = get_accidents()
-# insert_accidents(accidents)
 
 def lambda_handler(event, context):
+
     # TODO implement
 
     #311 Calls

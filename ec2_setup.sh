@@ -11,27 +11,8 @@ mv index.html getDocker.sh
 chmod 744 getDocker.sh
 sh getDocker.sh
 sudo usermod -aG docker ubuntu
-# At this stage we should logout, but we wont
+# At this stage we should logout, but we wont so we keep using sudo
 
 #Get docker container
 sudo docker pull yabramuvdi/dashboards:latest
 sudo docker run -d --name app -p 8050:8050 yabramuvdi/dashboards:latest
-
-#################################################################
-# OLD CODE
-#################################################################
-
-#git clone https://github.com/yabramuvdi/warehousing-final-project.git
-
-#cd warehousing-final-project/
-#chmod +x load_final.py
-#chmod +x app.py
-#chmod +x ec2_setup.sh
-
-#sudo apt-get update
-#curl -O https://bootstrap.pypa.io/get-pip.py
-#sudo apt-get install python3-distutils
-#python3 get-pip.py --user
-
-#python3 -m venv venv && source venv/bin/activate
-#sudo pip3 install dash==1.6.1 dash-daq==0.3.1 pandas datetime plotly mysql-connector-python
